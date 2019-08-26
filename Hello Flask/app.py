@@ -1,6 +1,8 @@
 from flask import Flask,request,render_template,redirect,url_for,send_file
 from flask_sqlalchemy import SQLAlchemy
 from io import BytesIO
+from encrypt import encrypt,decrypt
+import os
 #from forms import SenderForm
 
 app = Flask(__name__)
@@ -9,7 +11,8 @@ app.config["SQLALCHEMY_TRACK_MODIFICATION"] = False
 
 db = SQLAlchemy(app)
 
-
+salt = os.urandom(64)
+nonce = os.urandom(12)
 
 @app.before_first_request
 def create_table():
@@ -35,6 +38,10 @@ def sender():
         print(request.form)
         file=request.files['file']
         #return(file.filename)
+        cipher = encrypt(request.form.get("message"),request.form.get("key"),salt,nonce)
+        print("cipher text :" + str(cipher))
+        decrypted = decrypt(cipher,request.form.get("key"),salt,nonce)
+        print("decrypted string:" + str(decrypted))
         book = Book(name=request.form.get("name"),key=request.form.get("key"),
         message=request.form.get("message"),data=file.read())
         db.session.add(book)
