@@ -11,8 +11,9 @@ app.config["SQLALCHEMY_TRACK_MODIFICATION"] = False
 
 db = SQLAlchemy(app)
 
-salt = os.urandom(64)
-nonce = os.urandom(12)
+#os.urandom(n)
+salt = b'/\xcd\xfe\xed\x95MP\xf4\xc1\xd4\xf2\x8b\x80#s)\xf3\xcb}\x08\x16\xe0\xcb\xb9M\x91$\x9fy\xcd\xde\x15\x1c]\xd9\xcaB5 \x14:T4M`\xba\x94L\x82u<[X\xe7nj\x01\x1edM\x87\x19\xd9\x18'
+nonce = b'\xc5\xaeK\xda\xaa\xa8-v\xdaV\xd5O'
 
 @app.before_first_request
 def create_table():
@@ -54,7 +55,7 @@ def sender():
 def receiver():
     file_data=Book.query.filter_by(name='kinjal das').first()
     return send_file(BytesIO(file_data.data),attachment_filename='test.jpg',as_attachment=True)
-    
+
 
 if __name__ == '__main__':
     # from db import db # DEBUG: db.init_app(app)
