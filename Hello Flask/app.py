@@ -3,11 +3,17 @@ from flask_sqlalchemy import SQLAlchemy
 from io import BytesIO
 from encrypt import encrypt,decrypt
 import os
+from stegano import encode_image
+from werkzeug.utils import secure_filename
 #from forms import SenderForm
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI']='sqlite:///data1.db'
 app.config["SQLALCHEMY_TRACK_MODIFICATION"] = False
+APP_ROOT = os.path.dirname(os.path.abspath(__file__))
+UPLOAD_FOLDER = os.path.join(APP_ROOT,"temp/")
+app.config['UPLOAD_FOLDER']= UPLOAD_FOLDER
+ALLOWED_EXTENSIONS = set(['png','jpg'])
 
 db = SQLAlchemy(app)
 
@@ -21,9 +27,9 @@ def create_table():
 
 class Book(db.Model):
     name = db.Column(db.String(80), unique=True, nullable=False, primary_key=True)
-    key = db.Column(db.String(80), unique=True, nullable=False)
-    message = db.Column(db.String(80), unique=True, nullable=False)
-    data=db.Column(db.LargeBinary)
+    # key = db.Column(db.String(80), unique=True, nullable=False)
+    # message = db.Column(db.String(80), unique=True, nullable=False)
+    data=db.Column(db.String(80), unique=True, nullable=False)
 
     def __repr__(self):
         return "<Title: {}>".format(self.name)
@@ -38,13 +44,22 @@ def sender():
     if request.method == 'POST':
         print(request.form)
         file=request.files['file']
+        # saving file name
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'],secure_filename(file.filename)))
         #return(file.filename)
+        # encrypting msg
         cipher = encrypt(request.form.get("message"),request.form.get("key"),salt,nonce)
+
         print("cipher text :" + str(cipher))
-        decrypted = decrypt(cipher,request.form.get("key"),salt,nonce)
-        print("decrypted string:" + str(decrypted))
-        book = Book(name=request.form.get("name"),key=request.form.get("key"),
-        message=request.form.get("message"),data=file.read())
+        # decrypted = decrypt(cipher,request.form.get("key"),salt,nonce)
+        # print("decrypted string:" + str(decrypted))
+        # stegano image
+        path_name=UPLOAD_FOLDER+file.filename
+        filepath=encode_image(request.form.get("name"),str(cipher),APP_ROOT,path_name)
+        print("filepath:" + str(filepath))
+        # putting data into databse
+        # book = Book(name=request.form.get("name"),data=file.read())
+        book = Book(name=request.form.get("name"),data=filepath)
         db.session.add(book)
         db.session.commit()
         return(file.filename)

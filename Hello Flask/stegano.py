@@ -1,5 +1,7 @@
 from PIL import Image, ImageFont, ImageDraw
+import os
 import textwrap
+from datetime import datetime
 
 def decode_image(file_location="./images/encoded_image.png"):
     """Decodes the hidden message in an image
@@ -37,11 +39,12 @@ def write_text(text_to_write, image_size):
         offset += 10
     return image_text
 
-def encode_image(text_to_encode, template_image="./images/source.png"):
+def encode_image(user_name,text_to_encode,APP_ROOT,template_image="./images/source.png"):
     """Encodes a text message into an image
     text_to_encode: the text to encode into the template image
     template_image: the image to use for encoding. An image is provided by default.
     """
+    name=user_name
     template_image = Image.open(template_image)
     red_template = template_image.split()[0]
     green_template = template_image.split()[1]
@@ -69,7 +72,12 @@ def encode_image(text_to_encode, template_image="./images/source.png"):
                 red_template_pix = red_template_pix[:-1] + '0'
             pixels[i, j] = (int(red_template_pix, 2), green_template.getpixel((i,j)), blue_template.getpixel((i,j)))
 
-    encoded_image.save("images/encoded_image.png")
+    # encoded_image.save("images/encoded_image.png")
+
+    filename=os.path.join(APP_ROOT,"/images/")+user_name.split()[0]+"_"+datetime.now().strftime("%d/%m/%y-%H:%M:%S")+".png"
+    print(filename)
+    encoded_image.save("images/filename.png")
+    return filename
 
 if __name__ == '__main__':
     encode_image("Hidden Message")
