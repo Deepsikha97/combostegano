@@ -64,7 +64,8 @@ def sender():
         db.session.add(book)
         db.session.commit()
         return(file.filename)
-    return render_template("index.html")
+    else:
+        return render_template("sender.html")
 
 
 # @app.route("/receiver", methods=["GET", "POST"])
@@ -76,16 +77,17 @@ def sender():
 @app.route("/receiver", methods=["GET", "POST"])
 def receiver():
     if request.method == 'POST':
-        
+
         username=request.form.get("name")
         print(username)
         file_data=Book.query.filter_by(name=username)
         print(file_data)
         # return send_file(BytesIO(file_data.data),attachment_filename='test.jpg',as_attachment=True)
         return send_file('/var/www/PythonProgramming/PythonProgramming/static/images/python.jpg')
-    return render_template("index.html")
+    else:
+        return render_template("receiver.html")
 
-    
+
 
 
 
