@@ -5,6 +5,7 @@ from encrypt import encrypt,decrypt
 import os
 from stegano import encode_image
 from werkzeug.utils import secure_filename
+from flask import send_file
 #from forms import SenderForm
 
 app = Flask(__name__)
@@ -63,13 +64,29 @@ def sender():
         db.session.add(book)
         db.session.commit()
         return(file.filename)
-    return render_template("sender.html")
+    return render_template("index.html")
+
+
+# @app.route("/receiver", methods=["GET", "POST"])
+# def receiver():
+#     file_data=Book.query.filter_by(name='kinjal das').first()
+#     return send_file(BytesIO(file_data.data),attachment_filename='test.jpg',as_attachment=True)
 
 
 @app.route("/receiver", methods=["GET", "POST"])
 def receiver():
-    file_data=Book.query.filter_by(name='kinjal das').first()
-    return send_file(BytesIO(file_data.data),attachment_filename='test.jpg',as_attachment=True)
+    if request.method == 'POST':
+        
+        username=request.form.get("name")
+        print(username)
+        file_data=Book.query.filter_by(name=username)
+        print(file_data)
+        # return send_file(BytesIO(file_data.data),attachment_filename='test.jpg',as_attachment=True)
+        return send_file('/var/www/PythonProgramming/PythonProgramming/static/images/python.jpg')
+    return render_template("index.html")
+
+    
+
 
 
 if __name__ == '__main__':
