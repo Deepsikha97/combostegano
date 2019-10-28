@@ -8,6 +8,7 @@ from werkzeug.utils import secure_filename
 from flask import send_file
 from datetime import datetime
 from zipfile import ZipFile
+from os.path import basename
 #from forms import SenderForm
 
 app = Flask(__name__)
@@ -91,7 +92,7 @@ def receiver():
                 dataf=data.data
                 print(dataf)
                 # return send_file(dataf,as_attachment=True)
-                zipObj.write(dataf)
+                zipObj.write(dataf , basename(dataf))
         zipObj.close()
         return send_file(username + '_download.zip',as_attachment=True)
         # return send_file(BytesIO(file_data.data),attachment_filename='test.jpg',as_attachment=True)
