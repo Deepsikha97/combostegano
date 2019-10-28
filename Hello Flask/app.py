@@ -7,6 +7,7 @@ from stegano import encode_image
 from werkzeug.utils import secure_filename
 from flask import send_file
 from datetime import datetime
+from zipfile import ZipFile
 #from forms import SenderForm
 
 app = Flask(__name__)
@@ -80,19 +81,19 @@ def sender():
 @app.route("/receiver", methods=["GET", "POST"])
 def receiver():
     if request.method == 'POST':
-
         username=request.form.get("name").split()[0]
         print(username)
         file_data=Book.query.all()
+        zipObj = ZipFile(username + '_download.zip', 'w')
         for data in file_data:
             name=data.name.split("-")[0]
-            
             if(name==username):
-                data=data.data
-                return send_file(data.data,as_attachment=True)
-
-            
-        print(str(file_data))
+                dataf=data.data
+                print(dataf)
+                # return send_file(dataf,as_attachment=True)
+                zipObj.write(dataf)
+        zipObj.close()
+        return send_file(username + '_download.zip',as_attachment=True)
         # return send_file(BytesIO(file_data.data),attachment_filename='test.jpg',as_attachment=True)
         # return send_file(data.data,as_attachment=True)
     else:
