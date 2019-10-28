@@ -6,6 +6,7 @@ import os
 from stegano import encode_image
 from werkzeug.utils import secure_filename
 from flask import send_file
+from datetime import datetime
 #from forms import SenderForm
 
 app = Flask(__name__)
@@ -33,7 +34,7 @@ class Book(db.Model):
     data=db.Column(db.String(80), nullable=False)
 
     def __repr__(self):
-        return "<Title: {}>".format(self.name)
+        return "<Name: {}>".format(self.name)
 
 @app.route('/')
 def index():
@@ -60,7 +61,9 @@ def sender():
         print("filepath:" + str(filepath))
         # putting data into databse
         # book = Book(name=request.form.get("name"),data=file.read())
-        book = Book(name=request.form.get("name"),data=filepath)
+        # filename=user_name.split()[0]+"_"+datetime.now().strftime("%d_%m_%y-%H:%M:%S")+".png"
+        username=request.form.get("name").split()[0]+"-"+datetime.now().strftime("%d_%m_%y-%H:%M:%S")
+        book = Book(name=username,data=filepath)
         db.session.add(book)
         db.session.commit()
         return(file.filename)
@@ -78,12 +81,20 @@ def sender():
 def receiver():
     if request.method == 'POST':
 
-        username=request.form.get("name")
+        username=request.form.get("name").split()[0]
         print(username)
-        file_data=Book.query.filter_by(name=username)
-        print(file_data)
+        file_data=Book.query.all()
+        for data in file_data:
+            name=data.name.split("-")[0]
+            
+            if(name==username):
+                data=data.data
+                return send_file(data.data,as_attachment=True)
+
+            
+        print(str(file_data))
         # return send_file(BytesIO(file_data.data),attachment_filename='test.jpg',as_attachment=True)
-        return send_file('/var/www/PythonProgramming/PythonProgramming/static/images/python.jpg')
+        # return send_file(data.data,as_attachment=True)
     else:
         return render_template("receiver.html")
 
