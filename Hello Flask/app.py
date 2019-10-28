@@ -11,7 +11,7 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI']='sqlite:///data1.db'
 app.config["SQLALCHEMY_TRACK_MODIFICATION"] = False
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
-UPLOAD_FOLDER = os.path.join(APP_ROOT,"temp/")
+UPLOAD_FOLDER = os.path.join(APP_ROOT,"temp\\")
 app.config['UPLOAD_FOLDER']= UPLOAD_FOLDER
 ALLOWED_EXTENSIONS = set(['png','jpg'])
 
@@ -26,10 +26,10 @@ def create_table():
     db.create_all()
 
 class Book(db.Model):
-    name = db.Column(db.String(80), unique=True, nullable=False, primary_key=True)
+    name = db.Column(db.String(80), nullable=False, primary_key=True)
     # key = db.Column(db.String(80), unique=True, nullable=False)
     # message = db.Column(db.String(80), unique=True, nullable=False)
-    data=db.Column(db.String(80), unique=True, nullable=False)
+    data=db.Column(db.String(80), nullable=False)
 
     def __repr__(self):
         return "<Title: {}>".format(self.name)

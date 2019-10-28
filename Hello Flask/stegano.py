@@ -1,6 +1,7 @@
 from PIL import Image, ImageFont, ImageDraw
 import os
 import textwrap
+from werkzeug.utils import secure_filename
 from datetime import datetime
 
 def decode_image(file_location="./images/encoded_image.png"):
@@ -74,10 +75,12 @@ def encode_image(user_name,text_to_encode,APP_ROOT,template_image="./images/sour
 
     # encoded_image.save("images/encoded_image.png")
 
-    filename=os.path.join(APP_ROOT,"/images/")+user_name.split()[0]+"_"+datetime.now().strftime("%d/%m/%y-%H:%M:%S")+".png"
+    filename=user_name.split()[0]+"_"+datetime.now().strftime("%d_%m_%y-%H:%M:%S")+".png"
+    UPLOAD_FOLDER = os.path.join(APP_ROOT,"images\\")
     print(filename)
-    encoded_image.save("images/filename.png")
-    return filename
+    path = os.path.join(UPLOAD_FOLDER,secure_filename(filename))
+    encoded_image.save(path)
+    return (path)
 
 if __name__ == '__main__':
     encode_image("Hidden Message")
