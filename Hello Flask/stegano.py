@@ -4,10 +4,12 @@ import textwrap
 from werkzeug.utils import secure_filename
 from datetime import datetime
 
-def decode_image(file_location="./images/encoded_image.png"):
+def decode_image(file_location="./images/encoded_image.png", dest_location="./images/encoded_image.png"):
     """Decodes the hidden message in an image
     file_location: the location of the image file to decode. By default is the provided encoded image in the images folder
     """
+    print(file_location)
+    print(dest_location)
     encoded_image = Image.open(file_location)
     red_channel = encoded_image.split()[0]
 
@@ -23,7 +25,7 @@ def decode_image(file_location="./images/encoded_image.png"):
                 pixels[i, j] = (255, 255, 255)
             else:
                 pixels[i, j] = (0,0,0)
-    decoded_image.save("./images/decoded_image.png")
+    decoded_image.save(dest_location)
 
 def write_text(text_to_write, image_size):
     """Writes text to an RGB image. Automatically line wraps
