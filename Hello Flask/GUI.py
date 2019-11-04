@@ -1,10 +1,10 @@
-from tkinter import Tk,filedialog,Frame,BOTH,Button,Label,StringVar,Entry,LEFT,RIGHT
+from tkinter import Tk,filedialog,Frame,BOTH,Button,Label,StringVar,Entry,LEFT,RIGHT,messagebox
 from zipfile import ZipFile
 import tempfile
 from pathlib import Path
 import os
 from stegano import decode_image
-from ocr import ocr_core
+#from ocr import ocr_core
 from app import salt,nonce
 from encrypt import decrypt
 
@@ -67,6 +67,7 @@ class Window(Frame):
                         msg = decode_image(extract_dir+"\\"+file)
                         print(msg)
                         print("decrypted message : "+decrypt(msg.encode('utf-8'),key,salt,nonce))
+                        messagebox.showinfo(file, "decrypted message : "+decrypt(msg.encode('utf-8'),key,salt,nonce))
                     # processedfiles = os.listdir(process_dir)
                     # for file in processedfiles:
                     #     ocr_text = ocr_core(process_dir+"\\"+file)
