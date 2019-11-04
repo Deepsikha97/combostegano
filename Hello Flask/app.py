@@ -59,7 +59,7 @@ def sender():
         # print("decrypted string:" + str(decrypted))
         # stegano image
         path_name=UPLOAD_FOLDER+file.filename
-        filepath=encode_image(request.form.get("name"),str(cipher),APP_ROOT,path_name)
+        filepath=encode_image(request.form.get("name"),cipher,APP_ROOT,path_name)
         print("filepath:" + str(filepath))
         # putting data into databse
         # book = Book(name=request.form.get("name"),data=file.read())

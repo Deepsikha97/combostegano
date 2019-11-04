@@ -5,6 +5,8 @@ from pathlib import Path
 import os
 from stegano import decode_image
 from ocr import ocr_core
+from app import salt,nonce
+from encrypt import decrypt
 
 class Window(Frame):
     def __init__(self, master=None):
@@ -47,25 +49,28 @@ class Window(Frame):
     
 
     def destagano_file(self):
-        print(self.key.get())
+        key = self.key.get()
+        print(key)
         if self.file != -1:
             if self.file.endswith(".zip"):
                 with ZipFile(self.file,'r') as zip:
                     zip.printdir()
                     dir = tempfile.gettempdir()
                     extract_dir = dir + "\\GUI\\extracted_images\\" + Path(self.file).name[0:-4]
-                    process_dir = dir + "\GUI\processed_images\\" + Path(self.file).name[0:-4]
+                    #process_dir = dir + "\\GUI\\processed_images\\" + Path(self.file).name[0:-4]
                     print(extract_dir)
                     zip.extractall(extract_dir)
-                    if not os.path.exists(process_dir):
-                        os.makedirs(process_dir)
+                    # if not os.path.exists(process_dir):
+                    #     os.makedirs(process_dir)
                     listfiles = os.listdir(extract_dir)
                     for file in listfiles:
-                        decode_image(extract_dir+"\\"+file,process_dir+"\\"+file)
-                    processedfiles = os.listdir(process_dir)
-                    for file in processedfiles:
-                        ocr_text = ocr_core(process_dir+"\\"+file)
-                        print(ocr_text)
+                        msg = decode_image(extract_dir+"\\"+file)
+                        print(msg)
+                        print("decrypted message : "+decrypt(msg.encode('utf-8'),key,salt,nonce))
+                    # processedfiles = os.listdir(process_dir)
+                    # for file in processedfiles:
+                    #     ocr_text = ocr_core(process_dir+"\\"+file)
+                    #     print(ocr_text)
                     print("done")
 
 
