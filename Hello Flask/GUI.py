@@ -1,4 +1,4 @@
-from tkinter import Tk,filedialog,Frame,BOTH,Button,Label,StringVar
+from tkinter import Tk,filedialog,Frame,BOTH,Button,Label,StringVar,Entry,LEFT,RIGHT
 from zipfile import ZipFile
 import tempfile
 from pathlib import Path
@@ -12,6 +12,8 @@ class Window(Frame):
         self.master = master
         self.file = -1
         self.filename = StringVar()
+        self.key = StringVar()
+        self.key.set("Not Found!")
         self.filename.set("No File Selected!")
         self.init_window()
 
@@ -27,6 +29,12 @@ class Window(Frame):
         text = Label(self, textvariable=self.filename)
         text.pack(fill="x")
 
+# textbox
+        lbl = Label(self,text="Key")
+        lbl.place(x=150, y=250)
+        key = Entry(self,bd=5,textvariable=self.key)
+        key.place(x=200, y=250)
+
         file_button = Button(self, text="Decode ! ", command=self.destagano_file)
         # placing the button on my window
         file_button.place(x=200, y=300)
@@ -39,6 +47,7 @@ class Window(Frame):
     
 
     def destagano_file(self):
+        print(self.key.get())
         if self.file != -1:
             if self.file.endswith(".zip"):
                 with ZipFile(self.file,'r') as zip:

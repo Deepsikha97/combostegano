@@ -32,14 +32,15 @@ def write_text(text_to_write, image_size):
     text_to_write: the text to write to the image
     """
     image_text = Image.new("RGB", image_size)
-    font = ImageFont.load_default().font
+    #font = ImageFont.load_default().font
+    font = ImageFont.truetype("arial.ttf", 50)
     drawer = ImageDraw.Draw(image_text)
 
     #Text wrapping. Change parameters for different text formatting
-    margin = offset = 10
-    for line in textwrap.wrap(text_to_write, width=60):
+    margin = offset = 0
+    for line in textwrap.wrap(text_to_write, width=15):
         drawer.text((margin,offset), line, font=font)
-        offset += 10
+        offset += 75
     return image_text
 
 def encode_image(user_name,text_to_encode,APP_ROOT,template_image="./images/source.png"):
